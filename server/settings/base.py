@@ -54,6 +54,8 @@ PACKAGE_APPS = [
 ]
 
 PROJECT_APPS = [
+    'chats',
+    'members',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PACKAGE_APPS + PROJECT_APPS
