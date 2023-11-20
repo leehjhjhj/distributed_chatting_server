@@ -1,3 +1,2 @@
-from django.db import models
-
+from .domains import Chat, Participant
 # Create your models here.
