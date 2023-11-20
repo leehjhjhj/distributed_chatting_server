@@ -7,3 +7,6 @@ class Participant(models.Model):
     chat = models.ForeignKey('Chat', models.DO_NOTHING)
     participated_at = models.DateTimeField(auto_now_add=True)
     left_at = models.DateTimeField(null=True)
+
+    class Meta:
+        db_table = 'participants'
