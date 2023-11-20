@@ -5,7 +5,7 @@ class Member(AbstractBaseUser):
     id = models.BigAutoField(primary_key=True)
     email = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
-    nickname = models.CharField(max_length=10)
+    nickname = models.CharField(unique=True, max_length=10)
     is_blocked = models.BooleanField(default=False)
     
     USERNAME_FIELD = 'email'
