@@ -73,7 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 ASGI_APPLICATION = "server.asgi.application"
-
+AUTH_USER_MODEL = 'members.Member'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',

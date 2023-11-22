@@ -7,8 +7,6 @@ class Chat(models.Model):
     description = models.CharField(max_length=64)
     made_by = models.ForeignKey(Member, models.DO_NOTHING)
     max_capacity = models.IntegerField()
-    headcount = models.IntegerField()
+    headcount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    class Meta:
-        db_table = 'chats'
