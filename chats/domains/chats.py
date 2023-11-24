@@ -7,8 +7,13 @@ class Chat(models.Model):
     description = models.CharField(max_length=64)
     made_by = models.ForeignKey(Member, models.DO_NOTHING)
     max_capacity = models.IntegerField()
-    headcount = models.IntegerField()
+    headcount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    class Meta:
-        db_table = 'chats'
+    @property
+    def chat_group_name(self):
+        return self.make_call_group_name(call=self)
+
+    @staticmethod
+    def make_chat_group_name(chat_id=None):
+        return f"chat-{chat_id}"

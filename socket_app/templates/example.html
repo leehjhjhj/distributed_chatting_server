@@ -1,0 +1,64 @@
+<h1>WS TEST</h1>
+
+<script>
+    console.log('{{ chat_id }}');
+    const handlers = {
+        ws: null,
+        retry: 0,
+        connect(ws_url) {
+            this.ws = new WebSocket(ws_url || this.ws?.url);
+    
+            this.ws.onopen = this.onopen.bind(this);
+            this.ws.onclose = this.onclose.bind(this);
+            this.ws.onerror = this.onerror.bind(this);
+            this.ws.onmessage = this.onmessage.bind(this);
+        },
+        reconnect() {
+            this.connect();
+        },
+        onopen() {
+            console.log("웹소켓 서버와 접속");
+            this.retry = 0;
+        },
+        onclose(event) {
+            if(!event.wasClean) {
+                console.error("웹소켓 서버가 죽거나 네트워크 장애입니다.");
+    
+                if( this.retry < 3 ) {
+                    this.retry += 1;
+                    setTimeout(() => {
+                        this.reconnect();
+                        console.log(`[${this.retry}] 접속 재시도 ...`);
+                    }, 1000 * this.retry);
+                }
+                else {
+                    alert("웹소켓 서버에 접속할 수 없습니다. 사이트 홈으로 이동합니다.");
+                    window.location.href = "/";
+                }
+            }
+        },
+        onerror() {
+            console.error("웹소켓 에러가 발생했습니다.");
+        },
+        onmessage(event) {
+            const message_json = event.data;
+            console.log("웹소켓 텍스트 메세지 수신 :", message_json);
+    
+            const { type, chat_id } = JSON.parse(message_json);
+    
+            switch(type) {
+                case "chat.message":
+                    console.log("메시지타입 :", type);
+                    break;
+                default:
+                    console.error(`Invalid message type : ${type}`);
+            }
+        }
+    };
+
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws_url = ws_scheme + '://' + window.location.host + '/ws/chat/' + '{{ chat_id }}' + '/';;
+    //const ws_url = ws_scheme + '://' + window.location.host + '/ws/call/' + '{{ post_pk }}' + '/';;
+
+    handlers.connect(ws_url);
+</script>

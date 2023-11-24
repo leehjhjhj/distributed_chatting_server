@@ -39,6 +39,7 @@ PACKAGE_APPS = [
 PROJECT_APPS = [
     'chats',
     'members',
+    'socket_app',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PACKAGE_APPS + PROJECT_APPS
@@ -58,7 +59,9 @@ ROOT_URLCONF = 'server.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'socket_app' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,7 +76,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 ASGI_APPLICATION = "server.asgi.application"
-
+AUTH_USER_MODEL = 'members.Member'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -125,6 +128,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('localhost', 6379)],
+        },
+    },
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
