@@ -65,8 +65,8 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.table.put_item(
         Item={
             'message_id': f'{chat_id}-{now}',
-            'chat_id': chat_id,
-            'user_id': user.id,
+            'chat_id': str(chat_id),
+            'user_id': str(user.id),
             'user_nickname': user.nickname,
             'message': message_dict["message"],
             'timestamp': now
