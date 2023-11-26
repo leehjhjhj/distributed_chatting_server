@@ -25,7 +25,7 @@ class ChatMessageResponseSerializer(serializers.Serializer):
     oldMessages = ChatMessageSerializer(source='old_messages', many=True)
 
 class ChatObjectResponseSerailzier(serializers.ModelSerializer):
-    madeBy = serializers.CharField(source='made_by')
+    madeBy = serializers.CharField(source='made_by.nickname')
     maxCapacity = serializers.CharField(source='max_capacity')
 
     class Meta:
