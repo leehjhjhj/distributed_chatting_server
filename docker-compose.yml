@@ -12,7 +12,7 @@ services:
     platform: linux/amd64
   web:
     build:
-      context: .
+      context: ./config/web
       dockerfile: ./config/web
     volumes:
       - static_volume:/project/data/static
