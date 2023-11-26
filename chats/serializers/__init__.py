@@ -3,4 +3,5 @@ from .chat_serializer import (
     ChatMessageResponseSerializer,
     ChatMessageSerializer,
     ChatObjectResponseSerailzier,
+    ChatJoinResponseSerializer,
 )

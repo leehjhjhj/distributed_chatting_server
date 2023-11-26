@@ -16,6 +16,10 @@ class ChatMessageSerializer(serializers.Serializer):
     message = serializers.CharField()
     chatId = serializers.CharField(source='chat_id')
 
+class ChatJoinResponseSerializer(serializers.Serializer):
+    joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
+    oldmessages = ChatMessageSerializer(source='old_messages', many=True)
+
 class LastEvaluatedKeySerailzier(serializers.Serializer):
     chatId = serializers.CharField(source='chat_id')
     timestamp = serializers.DateTimeField()
