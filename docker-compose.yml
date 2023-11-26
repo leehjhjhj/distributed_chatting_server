@@ -1,0 +1,36 @@
+version: '3'
+services:
+  nginx:
+    build: ./config/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/static
+    image: 465547973024.dkr.ecr.ap-northeast-2.amazonaws.com/clclcafe-nginx
+    depends_on:
+      - web
+    platform: linux/amd64
+  web:
+    build:
+      context: .
+      dockerfile: ./config/web
+    volumes:
+      - static_volume:/project/data/static
+      - ./:/code
+    command: ["./start.sh"]
+    ports:
+      - "8000:8000"
+    platform: linux/amd64
+    image: 465547973024.dkr.ecr.ap-northeast-2.amazonaws.com/clclcafe-web
+    environment:
+      - DJANGO_SETTINGS_MODULE=server.settings.prod
+    env_file:
+      - .env
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    ports:
+        - "6379:6379"
+volumes:
+  static_volume:
