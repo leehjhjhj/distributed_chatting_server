@@ -1,5 +1,4 @@
 from django.db import models
-from members.domains import Member
 
 class Chat(models.Model):
     id = models.BigAutoField(primary_key=True)
