@@ -23,3 +23,11 @@ class LastEvaluatedKeySerailzier(serializers.Serializer):
 class ChatMessageResponseSerializer(serializers.Serializer):
     lastEvaluatedKey = LastEvaluatedKeySerailzier(source='last_evaluated_key')
     oldMessages = ChatMessageSerializer(source='old_messages', many=True)
+
+class ChatObjectResponseSerailzier(serializers.ModelSerializer):
+    madeBy = serializers.CharField(source='made_by')
+    maxCapacity = serializers.CharField(source='max_capacity')
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'name', 'description', 'madeBy', 'maxCapacity',)
