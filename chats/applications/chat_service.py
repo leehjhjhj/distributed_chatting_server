@@ -3,6 +3,8 @@ from chats.serializers import ChatCreateRequestSerializer, ChatMessageResponseSe
 from members.domains import Member
 from boto3.dynamodb.conditions import Key
 from utils.connect_dynamodb import get_dynamodb_table
+from utils.redis_utils import get_redis_connection
+from utils.exceptions.chat_exception import OverMaxCountError
 
 class ChatService:
     def __init__(self, chat_repository: ChatRepository, *args, **kwargs):
@@ -22,6 +24,13 @@ class ChatService:
         self._chat_repository.save_chat(new_chat)
 
     def join_chat(self, user_data: Member, chat_id: str):
+        chat = self._chat_repository.find_chat_by_id(chat_id=1)
+        max_capacity = chat.max_capacity
+        redis_conn = get_redis_connection(db_select=1)
+        headcount = redis_conn.scard(chat_id)
+        if headcount >= max_capacity:
+            raise OverMaxCountError
+
         table = get_dynamodb_table()
         query_params = {
             'KeyConditionExpression': Key('chat_id').eq(chat_id),
