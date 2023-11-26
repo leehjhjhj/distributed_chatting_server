@@ -12,8 +12,8 @@ services:
     platform: linux/amd64
   web:
     build:
-      context: ./config/web
-      dockerfile: ./config/web
+      context: .
+      dockerfile: ./config/web/Dockerfile
     volumes:
       - static_volume:/project/data/static
       - ./:/code
