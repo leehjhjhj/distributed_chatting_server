@@ -9,6 +9,9 @@ class Chat(models.Model):
     headcount = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        db_table = 'chats'
+
     @property
     def chat_group_name(self):
         return self.make_call_group_name(call=self)
