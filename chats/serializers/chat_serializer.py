@@ -26,7 +26,7 @@ class ChatMessageResponseSerializer(serializers.Serializer):
 
 class ChatObjectResponseSerailzier(serializers.ModelSerializer):
     madeBy = serializers.CharField(source='made_by.nickname')
-    maxCapacity = serializers.CharField(source='max_capacity')
+    maxCapacity = serializers.IntegerField(source='max_capacity')
 
     class Meta:
         model = Chat
