@@ -21,6 +21,7 @@ redis = "^5.0.1"
 channels-redis = "^4.1.0"
 django-channels-jwt-auth-middleware = "^1.0.0"
 boto3 = "^1.29.6"
+django-cors-headers = "^4.3.1"
 
 
 
