@@ -1,5 +1,5 @@
 from chats.domains import ChatRepository, Chat
-from chats.serializers import ChatObjectResponseSerailzier
+from chats.serializers import ChatObjectResponseSerailzier, JoinedMembersResponseSerializer
 from utils.redis_utils import get_redis_connection
 
 class ChatGetService:
@@ -25,4 +25,13 @@ class ChatGetService:
     def get_chat_detail(self, chat_id: int):
         chat: Chat = self._chat_repository.find_chat_by_id(chat_id)
         chat_object_response_serializer = ChatObjectResponseSerailzier(chat)
-        return chat_object_response_serializer.data 
+        return chat_object_response_serializer.data
+    
+    def get_joined_members(self, chat_id: int):
+        redis_conn = get_redis_connection(db_select=1)
+        joined_members = list(redis_conn.smembers(chat_id))
+        return JoinedMembersResponseSerializer(self._JoinedMembersDto(joined_members)).data
+
+    class _JoinedMembersDto:
+        def __init__(self, joined_members: list[int]):
+            self.joined_members = joined_members
