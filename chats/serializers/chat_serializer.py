@@ -35,3 +35,6 @@ class ChatObjectResponseSerailzier(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = ('id', 'name', 'description', 'madeBy', 'maxCapacity',)
+
+class JoinedMembersResponseSerializer(serializers.Serializer):
+    joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
