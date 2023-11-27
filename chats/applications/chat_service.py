@@ -1,8 +1,10 @@
 from chats.domains import ChatRepository, Participant, Chat
-from chats.serializers import ChatCreateRequestSerializer, ChatMessageResponseSerializer, ChatMessageSerializer
+from chats.serializers import ChatCreateRequestSerializer, ChatMessageResponseSerializer, ChatMessageSerializer, ChatJoinResponseSerializer
 from members.domains import Member
 from boto3.dynamodb.conditions import Key
 from utils.connect_dynamodb import get_dynamodb_table
+from utils.redis_utils import get_redis_connection
+from utils.exceptions.chat_exception import OverMaxCountError
 
 class ChatService:
     def __init__(self, chat_repository: ChatRepository, *args, **kwargs):
@@ -22,6 +24,13 @@ class ChatService:
         self._chat_repository.save_chat(new_chat)
 
     def join_chat(self, user_data: Member, chat_id: str):
+        chat = self._chat_repository.find_chat_by_id(chat_id)
+        max_capacity = chat.max_capacity
+        redis_conn = get_redis_connection(db_select=1)
+        headcount = redis_conn.scard(chat_id)
+        if headcount + 1 >= max_capacity:
+            raise OverMaxCountError
+
         table = get_dynamodb_table()
         query_params = {
             'KeyConditionExpression': Key('chat_id').eq(chat_id),
@@ -30,7 +39,9 @@ class ChatService:
         }
         response = table.query(**query_params)
         old_messages = response.get('Items')
-        chat_message_response_serialzier = ChatMessageSerializer(old_messages, many=True)
+        joined_members = list(redis_conn.smembers(chat_id))
+        joined_members.append(user_data.nickname)
+        chat_message_response_serialzier = ChatJoinResponseSerializer(self._ChatJoinDto(joined_members, old_messages))
         return chat_message_response_serialzier.data
     
     def get_more_messages(self, chat_id: str, last_evaluated_key: str):
@@ -53,6 +64,11 @@ class ChatService:
         chat_message_response_serialzier = ChatMessageResponseSerializer(self._ChatResponseDto(old_messages, last_evaluated_key))
         return chat_message_response_serialzier.data
     
+    class _ChatJoinDto:
+        def __init__(self,  joined_members: list, old_messages: list[dict]):
+            self.joined_members = joined_members
+            self.old_messages = old_messages
+
     class _ChatResponseDto:
         def __init__(self, old_messages: list[dict], last_evaluated_key: dict):
             self.old_messages = old_messages

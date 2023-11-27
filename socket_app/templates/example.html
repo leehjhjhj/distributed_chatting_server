@@ -57,7 +57,7 @@
     };
 
     const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    const ws_url = ws_scheme + '://' + window.location.host + '/ws/chat/' + '{{ chat_id }}' + '/';;
+    const ws_url = ws_scheme + '://' + window.location.host + '/ws/chat/' + '{{ chat_id }}' + '/' + '?token=' + '{{ token }}';;
     //const ws_url = ws_scheme + '://' + window.location.host + '/ws/call/' + '{{ post_pk }}' + '/';;
 
     handlers.connect(ws_url);

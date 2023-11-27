@@ -16,6 +16,10 @@ class ChatMessageSerializer(serializers.Serializer):
     message = serializers.CharField()
     chatId = serializers.CharField(source='chat_id')
 
+class ChatJoinResponseSerializer(serializers.Serializer):
+    joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
+    oldmessages = ChatMessageSerializer(source='old_messages', many=True)
+
 class LastEvaluatedKeySerailzier(serializers.Serializer):
     chatId = serializers.CharField(source='chat_id')
     timestamp = serializers.DateTimeField()
@@ -23,3 +27,14 @@ class LastEvaluatedKeySerailzier(serializers.Serializer):
 class ChatMessageResponseSerializer(serializers.Serializer):
     lastEvaluatedKey = LastEvaluatedKeySerailzier(source='last_evaluated_key')
     oldMessages = ChatMessageSerializer(source='old_messages', many=True)
+
+class ChatObjectResponseSerailzier(serializers.ModelSerializer):
+    madeBy = serializers.CharField(source='made_by.nickname')
+    maxCapacity = serializers.IntegerField(source='max_capacity')
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'name', 'description', 'madeBy', 'maxCapacity',)
+
+class JoinedMembersResponseSerializer(serializers.Serializer):
+    joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
