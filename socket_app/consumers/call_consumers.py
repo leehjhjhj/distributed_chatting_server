@@ -4,23 +4,21 @@ from chats.domains import Chat
 from datetime import datetime
 from decouple import config
 from utils.date import current_time
+from utils.redis_utils import get_redis_connection
 import boto3
 import logging
-
-AWS_ACCCESS_KEY=config('AWS_ACCCESS_KEY')
-AWS_SECRET_ACCESS_KEY=config('AWS_SECRET_ACCESS_KEY')
 
 class ChatConsumer(JsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.group_name = ""
-        self.nickname = ""
         self.dynamodb = boto3.resource(
             'dynamodb', region_name='ap-northeast-2',
-            aws_access_key_id=AWS_ACCCESS_KEY,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+            aws_access_key_id=config('AWS_ACCCESS_KEY'),
+            aws_secret_access_key=config('AWS_SECRET_ACCESS_KEY')
         )
         self.table = self.dynamodb.Table('clclcafe')
+        self.redis_conn = get_redis_connection(db_select=1)
 
     def receive_json(self, content, **kwargs):
         _type = content["type"]
@@ -42,8 +40,14 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.group_name = Chat.make_chat_group_name(self.chat_id)
 
         user = self.scope["user"]
-        self.nickname = user.nickname
-
+        self.redis_conn.sadd(self.chat_id, user.nickname)
+        async_to_sync(self.channel_layer.group_send)(
+                        self.group_name,
+                        {
+                            "type": "chat.user.join",
+                            "nickname": user.nickname,
+                        }
+                    )
         async_to_sync(self.channel_layer.group_add)(
             self.group_name,
             self.channel_name,
@@ -51,6 +55,15 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.accept()
 
     def disconnect(self, code):
+        user = self.scope["user"]
+        self.redis_conn.srem(self.chat_id, user.nickname)
+        async_to_sync(self.channel_layer.group_send)(
+                        self.group_name,
+                        {
+                            "type": "chat.user.leave",
+                            "nickname": user.nickname,
+                        }
+                    )
         if self.group_name:
             async_to_sync(self.channel_layer.group_discard)(
                 self.group_name,
@@ -70,11 +83,23 @@ class ChatConsumer(JsonWebsocketConsumer):
             'user_nickname': user.nickname,
             'message': message_dict["message"],
             'timestamp': now
-        }
-    )
+            }
+        )
         self.send_json({
             "type": "chat.message",
             "message": message_dict["message"],
-            "nickname": self.nickname,
-            "time": current_time()
+            "nickname": user.nickname,
+            "timestamp": current_time()
+        })
+
+    def chat_user_join(self, message_dict):
+        self.send_json({
+            "type": "chat.user.join",
+            "nickname": message_dict['nickname'],
+        })
+
+    def chat_user_leave(self, message_dict):
+        self.send_json({
+            "type": "chat.user.leave",
+            "nickname": message_dict['nickname'],
         })
