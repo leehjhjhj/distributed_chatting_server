@@ -15,6 +15,7 @@ class ChatMessageSerializer(serializers.Serializer):
     messageId = serializers.CharField(source='message_id')
     message = serializers.CharField()
     chatId = serializers.CharField(source='chat_id')
+    chatTime = serializers.CharField(source='chat_time')
 
 class LastEvaluatedKeySerailzier(serializers.Serializer):
     chatId = serializers.CharField(source='chat_id')
