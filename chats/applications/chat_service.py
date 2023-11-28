@@ -41,7 +41,8 @@ class ChatService:
         old_messages = response.get('Items')
         joined_members = list(redis_conn.smembers(chat_id))
         joined_members.append(user_data.nickname)
-        chat_message_response_serialzier = ChatJoinResponseSerializer(self._ChatJoinDto(joined_members, old_messages))
+        last_evaluated_key = response.get('LastEvaluatedKey', None)
+        chat_message_response_serialzier = ChatJoinResponseSerializer(self._ChatJoinDto(joined_members, last_evaluated_key, old_messages))
         return chat_message_response_serialzier.data
     
     def get_more_messages(self, chat_id: str, last_evaluated_key: str):
@@ -65,8 +66,9 @@ class ChatService:
         return chat_message_response_serialzier.data
     
     class _ChatJoinDto:
-        def __init__(self,  joined_members: list, old_messages: list[dict]):
+        def __init__(self,  joined_members: list, last_evaluated_key: dict, old_messages: list[dict]):
             self.joined_members = joined_members
+            self.last_evaluated_key = last_evaluated_key
             self.old_messages = old_messages
 
     class _ChatResponseDto:
