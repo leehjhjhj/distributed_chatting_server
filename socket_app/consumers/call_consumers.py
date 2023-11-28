@@ -82,7 +82,8 @@ class ChatConsumer(JsonWebsocketConsumer):
             'user_id': str(user.id),
             'user_nickname': user.nickname,
             'message': message_dict["message"],
-            'timestamp': now
+            'timestamp': now,
+            'chat_time': current_time()
             }
         )
         self.send_json({
