@@ -11,6 +11,9 @@ def validate_password(password):
         raise ValidationError("영문, 숫자, 특수문자를 조합해 6자 이상, 13자 이하 입력해주세요.")
     
 def validate_email(email):
+    if Member.objects.filter(email=email).exists():
+        raise ValidationError("이미 가입된 회원이에요!")
+    
     email_reg = r"^[a-zA-Z0-9_-]{6,13}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     email_regex = re.compile(email_reg)
 
@@ -18,5 +21,5 @@ def validate_email(email):
         raise ValidationError("아이디는 6자 이상 13자 이하로 가능하고, 특수 문자는 _와 -만 사용 가능해요.")
     
 def validate_nickname(nickname):
-    if Member.objects.get(nickname=nickname):
+    if Member.objects.filter(nickname=nickname).exists():
         raise ValidationError("닉네임이 이미 존재해요! 다른 걸로 부탁해요.")
