@@ -29,4 +29,8 @@ class MemberResponseSerializer(serializers.ModelSerializer):
 
 class SigninResponseSerializer(serializers.Serializer):
     accessToken = serializers.CharField(source='access_token')
+    refreshToken = serializers.CharField(source='refresh_token')
     member = MemberResponseSerializer()
+
+class LogoutRequestSerializer(serializers.Serializer):
+    refreshToken = serializers.CharField(source='refresh_token')
