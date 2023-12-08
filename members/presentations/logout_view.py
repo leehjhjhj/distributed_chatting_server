@@ -1,10 +1,10 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from members.containers import MembersContainer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-class LogoutView(TokenObtainPairView):
+class LogoutView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def __init__(self, *args, **kwargs):
