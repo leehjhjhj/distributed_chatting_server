@@ -3,11 +3,15 @@ from members.serializers import (
                             SignupRequestSerializer,
                             SigninRequestSerialzier,
                             SigninResponseSerializer,
+                            LogoutRequestSerializer,
                         )
 from members.domains import Member
 from django.contrib.auth.hashers import check_password
-from rest_framework_simplejwt.tokens import RefreshToken, Token
+from rest_framework_simplejwt.tokens import RefreshToken
 from utils.exceptions import PasswordWrongError
+from utils.token import validate_user, validate_token
+from utils.redis_utils import get_redis_connection
+from redis import Redis
 
 class MemberService:
     def __init__(self, member_repository: MemberRepository, *args, **kwargs):
@@ -29,8 +33,31 @@ class MemberService:
 
         if not check_password(password, member.password):
             raise PasswordWrongError
-
+        
         refresh: RefreshToken = RefreshToken.for_user(member)
         access_token = refresh.access_token
-        signin_serializer = SigninResponseSerializer({'access_token': access_token, 'member': member})
+
+        redis_conn: Redis = get_redis_connection(db_select=3)
+        redis_conn.set(member.id, str(refresh))
+
+        signin_serializer = SigninResponseSerializer(self.SigninDto(access_token, refresh, member))
         return signin_serializer.data
+    
+    def logout(self, request_data: dict, user_data: Member):
+        logout_request_serialzier = LogoutRequestSerializer(data=request_data)
+        logout_request_serialzier.is_valid(raise_exception=True)
+        logout_data: dict = logout_request_serialzier.validated_data
+        
+        refresh_token = logout_data.get('refresh_token')
+        validate_token(refresh_token)
+        user_id = user_data.id
+        validate_user(refresh_token, user_id)
+
+        redis_conn: Redis = get_redis_connection(db_select=3)
+        redis_conn.delete(user_id)
+
+    class SigninDto:
+        def __init__(self, access_token: str, refresh_token: str, member: Member):
+            self.access_token = access_token
+            self.refresh_token = refresh_token
+            self.member = member
