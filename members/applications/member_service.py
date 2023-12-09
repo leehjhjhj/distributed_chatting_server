@@ -9,7 +9,7 @@ from members.domains import Member
 from django.contrib.auth.hashers import check_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from utils.exceptions import PasswordWrongError
-from utils.token import validate_user, validate_token
+from utils.token import TokenValidator
 from utils.redis_utils import get_redis_connection
 from redis import Redis
 
@@ -43,16 +43,13 @@ class MemberService:
         signin_serializer = SigninResponseSerializer(self.SigninDto(access_token, refresh, member))
         return signin_serializer.data
     
-    def logout(self, request_data: dict, user_data: Member):
+    def logout(self, request_data: dict):
         logout_request_serialzier = LogoutRequestSerializer(data=request_data)
         logout_request_serialzier.is_valid(raise_exception=True)
         logout_data: dict = logout_request_serialzier.validated_data
         
         refresh_token = logout_data.get('refresh_token')
-        validate_token(refresh_token)
-        user_id = user_data.id
-        validate_user(refresh_token, user_id)
-
+        user_id = TokenValidator.get_user_id_from_refresh_token(refresh_token)
         redis_conn: Redis = get_redis_connection(db_select=3)
         redis_conn.delete(user_id)
 
