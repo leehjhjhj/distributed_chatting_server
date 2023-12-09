@@ -1,24 +1,42 @@
-from rest_framework_simplejwt.tokens import RefreshToken, Token
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 from utils.redis_utils import get_redis_connection
-from django.core.exceptions import ValidationError
+from rest_framework_simplejwt.exceptions import TokenError
+from utils.exceptions import (
+                                NotValidTokenError,
+                                NotMatchTokenUserError,
+                                AleadyLogoutUserError,
+                                RefreshTokenNotMatchError,
+                            )
 from redis import Redis
 
-def validate_token(token: str):
-    try:
-        RefreshToken(token)
-    except (InvalidToken, TokenError):
-        raise ValidationError('유효한 토큰이 아닙니다.')
+class TokenValidator:
+    def __init__(self, token: str, user_id: int = None):
+        self._refresh_token = token
+        self._user_id = user_id
+        self._redis_conn = get_redis_connection(db_select=3)
+       
+    @classmethod
+    def get_user_id_from_refresh_token(self, refresh_token):
+        try:
+            token_object = RefreshToken(refresh_token)
+            token_user_id: int = token_object.payload.get('user_id')
+            return token_user_id
+        except TokenError:
+            raise NotValidTokenError
+        
+    def validate_token(self):
+        try:
+            RefreshToken(self._refresh_token)
+        except TokenError:
+            raise NotValidTokenError
 
-def validate_user(token: str, user_id: int):
-    token_object = RefreshToken(token)
-    token_user_id: int = token_object.payload.get('user_id')
-    if token_user_id != user_id:
-        raise ValidationError('로그인한 유저와 토큰의 정보가 다릅니다.')
+    def validate_already_logout(self):
+        user_id: int = str(self._user_id)
+        if not self._redis_conn.exists(user_id):
+            raise AleadyLogoutUserError
 
-def validate_already_logout(user_id: int):
-    redis_conn: Redis = get_redis_connection(db=3)
-    user_id = str(user_id)
-
-    if not redis_conn.exists(user_id):
-        raise ValidationError("로그아웃 한 유저입니다.")
+    def validate_refresh_token_match(self):
+        str_user_id: str = str(self._user_id)
+        redis_refresh_token = self._redis_conn.get(str_user_id)
+        if self._refresh_token != redis_refresh_token:
+            raise RefreshTokenNotMatchError

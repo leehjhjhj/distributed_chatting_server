@@ -1,1 +1,1 @@
-from .refresh_token_validator import validate_token, validate_already_logout, validate_user
+from .refresh_token_validator import TokenValidator
