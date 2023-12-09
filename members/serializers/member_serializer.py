@@ -34,3 +34,10 @@ class SigninResponseSerializer(serializers.Serializer):
 
 class LogoutRequestSerializer(serializers.Serializer):
     refreshToken = serializers.CharField(source='refresh_token')
+
+class RefreshAccessRequestSerialzier(serializers.Serializer):
+    refreshToken = serializers.CharField(source='refresh_token')
+
+class RefreshAccessResponseSerialzier(serializers.Serializer):
+    accessToken = serializers.CharField(source='access_token')
+    refreshToken = serializers.CharField(source='refresh_token')
