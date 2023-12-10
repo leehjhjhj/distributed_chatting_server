@@ -1,11 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from chats.containers import ChatsContainer
 
 class ChatDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
