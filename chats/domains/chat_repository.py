@@ -10,3 +10,6 @@ class ChatRepository:
     
     def find_chat_by_id(self, chat_id: int):
         return get_object_or_404(Chat, id=chat_id)
+    
+    def delete_chat_object(self, chat: Chat):
+        chat.delete()
