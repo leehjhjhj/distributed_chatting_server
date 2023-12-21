@@ -4,7 +4,7 @@ from members.domains import Member
 from boto3.dynamodb.conditions import Key
 from utils.connect_dynamodb import get_dynamodb_table
 from utils.redis_utils import get_redis_connection
-from utils.exceptions import OverMaxCountError, NoRightToDeleteChat
+from utils.exceptions import OverMaxCountError, NoRightToDeleteChatError
 
 class ChatService:
     def __init__(self, chat_repository: ChatRepository, *args, **kwargs):
@@ -68,7 +68,7 @@ class ChatService:
     def delete_chat(self, chat_id: int, user_data: dict):
         chat: Chat = self._chat_repository.find_chat_by_id(chat_id)
         if chat.made_by != user_data:
-            raise NoRightToDeleteChat
+            raise NoRightToDeleteChatError
         self._chat_repository.delete_chat_object(chat)
 
     class _ChatJoinDto:
