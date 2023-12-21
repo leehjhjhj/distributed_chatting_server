@@ -6,6 +6,7 @@ from chats.presentations import (
     ChatRoomGetView,
     ChatDetailView,
     ChatJoinedMembersView,
+    ChatDeleteView,
 )
 
 app_name = 'chats'
@@ -17,4 +18,5 @@ urlpatterns = [
     path('', ChatRoomGetView.as_view()),
     path('<int:chat_id>/', ChatDetailView.as_view()),
     path('<int:chat_id>/members/', ChatJoinedMembersView.as_view()),
+    path('<int:chat_id>/delete/', ChatDeleteView.as_view()),
 ]

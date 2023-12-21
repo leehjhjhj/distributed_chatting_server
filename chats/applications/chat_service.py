@@ -1,10 +1,10 @@
-from chats.domains import ChatRepository, Participant, Chat
+from chats.domains import ChatRepository, Chat
 from chats.serializers import ChatCreateRequestSerializer, ChatMessageResponseSerializer, ChatMessageSerializer, ChatJoinResponseSerializer
 from members.domains import Member
 from boto3.dynamodb.conditions import Key
 from utils.connect_dynamodb import get_dynamodb_table
 from utils.redis_utils import get_redis_connection
-from utils.exceptions.chat_exception import OverMaxCountError
+from utils.exceptions import OverMaxCountError, NoRightToDeleteChat
 
 class ChatService:
     def __init__(self, chat_repository: ChatRepository, *args, **kwargs):
@@ -65,6 +65,12 @@ class ChatService:
         chat_message_response_serialzier = ChatMessageResponseSerializer(self._ChatResponseDto(old_messages, last_evaluated_key))
         return chat_message_response_serialzier.data
     
+    def delete_chat(self, chat_id: int, user_data: dict):
+        chat: Chat = self._chat_repository.find_chat_by_id(chat_id)
+        if chat.made_by != user_data:
+            raise NoRightToDeleteChat
+        self._chat_repository.delete_chat_object(chat)
+
     class _ChatJoinDto:
         def __init__(self,  joined_members: list, last_evaluated_key: dict, old_messages: list[dict]):
             self.joined_members = joined_members

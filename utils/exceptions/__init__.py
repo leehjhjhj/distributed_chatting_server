@@ -5,3 +5,4 @@ from .token_exception import (
                                 AleadyLogoutUserError,
                                 RefreshTokenNotMatchError,
                             )
+from .chat_exception import NoRightToDeleteChat, OverMaxCountError
