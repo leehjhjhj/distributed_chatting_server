@@ -10,8 +10,9 @@ class ChatRoomGetView(APIView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._chat_get_service = ChatsContainer.chat_get_service()
-
+    
     def get(self, request, *args, **kwargs):
-        order_by = request.query_params.get('order', 'latest')
-        response = self._chat_get_service.get_all_chat_rooms(order_by, request.user)
+        order_by = request.query_params.get('order')
+        search = request.query_params.get('search', None)
+        response = self._chat_get_service.get_all_chat_rooms(order_by, search, request.user)
         return Response(response, status=status.HTTP_200_OK)
