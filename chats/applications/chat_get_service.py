@@ -3,9 +3,6 @@ from chats.serializers import ChatObjectResponseSerailzier, JoinedMembersRespons
 from utils.redis_utils import get_redis_connection
 from utils.exceptions import RequiredLoginError
 from typing import Optional
-from django.db import connection, reset_queries
-
-reset_queries()
 
 class ChatGetService:
     def __init__(self, chat_repository: ChatRepository, *args, **kwargs):
