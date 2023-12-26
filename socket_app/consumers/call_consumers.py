@@ -25,7 +25,21 @@ class ChatConsumer(JsonWebsocketConsumer):
         _message = content["message"]
         _user_id = content["userId"]
         _user_nickname = content["userNickname"]
+        _chat_id = self.chat_id
+        _now = datetime.now().isoformat()
+
         if _type == "chat.message":
+            self.table.put_item(
+            Item={
+                'message_id': f'{_chat_id}-{_now}',
+                'chat_id': str(_chat_id),
+                'user_id': str(_user_id),
+                'user_nickname': _user_nickname,
+                'message': _message,
+                'timestamp': _now,
+                'chat_time': current_time()
+                }
+        )
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
@@ -76,23 +90,10 @@ class ChatConsumer(JsonWebsocketConsumer):
             )
 
     def chat_message(self, message_dict):
-        chat_id = self.chat_id
         message = message_dict["message"]
         user_id = message_dict["userId"]
         user_nickname = message_dict["userNickname"]
-        now = datetime.now().isoformat()
 
-        self.table.put_item(
-        Item={
-            'message_id': f'{chat_id}-{now}',
-            'chat_id': str(chat_id),
-            'user_id': str(user_id),
-            'user_nickname': user_nickname,
-            'message': message,
-            'timestamp': now,
-            'chat_time': current_time()
-            }
-        )
         self.send_json({
             "type": "chat.message",
             "message": message,
