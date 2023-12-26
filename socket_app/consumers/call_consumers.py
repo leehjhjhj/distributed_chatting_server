@@ -23,13 +23,16 @@ class ChatConsumer(JsonWebsocketConsumer):
     def receive_json(self, content, **kwargs):
         _type = content["type"]
         _message = content["message"]
-        
+        _user_id = content["userId"]
+        _user_nickname = content["userNickname"]
         if _type == "chat.message":
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
                     "type": "chat.message",
-                    "message": _message
+                    "message": _message,
+                    "userId": _user_id,
+                    "userNickname": _user_nickname
                 }
             )
         else:
@@ -74,25 +77,27 @@ class ChatConsumer(JsonWebsocketConsumer):
 
     def chat_message(self, message_dict):
         chat_id = self.chat_id
-        user = self.scope["user"]
+        message = message_dict["message"]
+        user_id = message_dict["userId"]
+        user_nickname = message_dict["userNickname"]
         now = datetime.now().isoformat()
 
         self.table.put_item(
         Item={
             'message_id': f'{chat_id}-{now}',
             'chat_id': str(chat_id),
-            'user_id': str(user.id),
-            'user_nickname': user.nickname,
-            'message': message_dict["message"],
+            'user_id': str(user_id),
+            'user_nickname': user_nickname,
+            'message': message,
             'timestamp': now,
             'chat_time': current_time()
             }
         )
         self.send_json({
             "type": "chat.message",
-            "message": message_dict["message"],
-            "userId": user.id,
-            "userNickname": user.nickname,
+            "message": message,
+            "userId": user_id,
+            "userNickname": user_nickname,
             "chatTime": current_time()
         })
 
