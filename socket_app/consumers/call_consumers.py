@@ -45,6 +45,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                         self.group_name,
                         {
                             "type": "chat.user.join",
+                            "userId": user.id,
                             "nickname": user.nickname,
                         }
                     )
@@ -61,6 +62,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                         self.group_name,
                         {
                             "type": "chat.user.leave",
+                            "userId": user.id,
                             "nickname": user.nickname,
                         }
                     )
@@ -89,6 +91,7 @@ class ChatConsumer(JsonWebsocketConsumer):
         self.send_json({
             "type": "chat.message",
             "message": message_dict["message"],
+            "userId": user.id,
             "nickname": user.nickname,
             "timestamp": current_time()
         })
@@ -96,11 +99,13 @@ class ChatConsumer(JsonWebsocketConsumer):
     def chat_user_join(self, message_dict):
         self.send_json({
             "type": "chat.user.join",
+            "userId": message_dict['userId'],
             "nickname": message_dict['nickname'],
         })
 
     def chat_user_leave(self, message_dict):
         self.send_json({
             "type": "chat.user.leave",
+            "userId": message_dict['userId'],
             "nickname": message_dict['nickname'],
         })
