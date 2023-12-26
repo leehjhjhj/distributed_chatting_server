@@ -31,15 +31,15 @@ class ChatConsumer(JsonWebsocketConsumer):
         if _type == "chat.message":
             self.table.put_item(
             Item={
-                'message_id': f'{_chat_id}-{_now}',
-                'chat_id': str(_chat_id),
-                'user_id': str(_user_id),
-                'user_nickname': _user_nickname,
-                'message': _message,
-                'timestamp': _now,
-                'chat_time': current_time()
+                    'message_id': f'{_chat_id}-{_now}',
+                    'chat_id': str(_chat_id),
+                    'user_id': str(_user_id),
+                    'user_nickname': _user_nickname,
+                    'message': _message,
+                    'timestamp': _now,
+                    'chat_time': current_time()
                 }
-        )
+            )
             async_to_sync(self.channel_layer.group_send)(
                 self.group_name,
                 {
