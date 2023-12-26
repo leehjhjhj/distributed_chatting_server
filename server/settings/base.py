@@ -21,6 +21,8 @@ CORS_ALLOWED_ORIGINS = [
 	'http://localhost:3000',
     'http://localhost:5173',
     'https://localhost:5173',
+    'https://clclcafe.kro.kr',
+    'https://clclcafe.vercel.app',
 ]
 
 # Application definition
