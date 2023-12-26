@@ -46,7 +46,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                         {
                             "type": "chat.user.join",
                             "userId": user.id,
-                            "nickname": user.nickname,
+                            "userNickname": user.nickname,
                         }
                     )
         async_to_sync(self.channel_layer.group_add)(
@@ -63,7 +63,7 @@ class ChatConsumer(JsonWebsocketConsumer):
                         {
                             "type": "chat.user.leave",
                             "userId": user.id,
-                            "nickname": user.nickname,
+                            "userNickname": user.nickname,
                         }
                     )
         if self.group_name:
@@ -92,20 +92,20 @@ class ChatConsumer(JsonWebsocketConsumer):
             "type": "chat.message",
             "message": message_dict["message"],
             "userId": user.id,
-            "nickname": user.nickname,
-            "timestamp": current_time()
+            "userNickname": user.nickname,
+            "chatTime": current_time()
         })
 
     def chat_user_join(self, message_dict):
         self.send_json({
             "type": "chat.user.join",
             "userId": message_dict['userId'],
-            "nickname": message_dict['nickname'],
+            "userNickname": message_dict['userNickname'],
         })
 
     def chat_user_leave(self, message_dict):
         self.send_json({
             "type": "chat.user.leave",
             "userId": message_dict['userId'],
-            "nickname": message_dict['nickname'],
+            "userNickname": message_dict['userNickname'],
         })
