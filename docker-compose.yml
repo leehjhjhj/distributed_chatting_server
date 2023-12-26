@@ -3,9 +3,11 @@ services:
   nginx:
     build: ./config/nginx
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
     volumes:
       - static_volume:/static
+      - ./etc/:/etc/ssl
     image: 465547973024.dkr.ecr.ap-northeast-2.amazonaws.com/clclcafe-nginx
     depends_on:
       - web
