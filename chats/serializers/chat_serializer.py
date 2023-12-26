@@ -24,7 +24,7 @@ class LastEvaluatedKeySerailzier(serializers.Serializer):
 class ChatJoinResponseSerializer(serializers.Serializer):
     joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
     lastEvaluatedKey = LastEvaluatedKeySerailzier(source='last_evaluated_key')
-    oldmessages = ChatMessageSerializer(source='old_messages', many=True)
+    oldMessages = ChatMessageSerializer(source='old_messages', many=True)
 
 class ChatMessageResponseSerializer(serializers.Serializer):
     lastEvaluatedKey = LastEvaluatedKeySerailzier(source='last_evaluated_key')
