@@ -34,6 +34,7 @@ class ChatService:
         table = get_dynamodb_table()
         query_params = {
             'KeyConditionExpression': Key('chat_id').eq(chat_id),
+            'ScanIndexForward': False,
             'Limit': 10
         }
         response = table.query(**query_params)
@@ -48,6 +49,7 @@ class ChatService:
         table = get_dynamodb_table()
         query_params = {
             'KeyConditionExpression': Key('chat_id').eq(chat_id),
+            'ScanIndexForward': False,
             'Limit': 10
         }
         if last_evaluated_key is not None:
