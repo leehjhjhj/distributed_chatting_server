@@ -1,5 +1,5 @@
 from chats.domains import ChatRepository, Chat
-from chats.serializers import ChatCreateRequestSerializer, ChatMessageResponseSerializer, ChatMessageSerializer, ChatJoinResponseSerializer
+from chats.serializers import ChatCreateRequestSerializer, ChatMessageResponseSerializer, ChatIdResponseSerializer, ChatJoinResponseSerializer
 from members.domains import Member
 from boto3.dynamodb.conditions import Key
 from utils.connect_dynamodb import get_dynamodb_table
@@ -22,7 +22,9 @@ class ChatService:
                 max_capacity=chat_data.get('max_capacity')
                 )
         self._chat_repository.save_chat(new_chat)
-
+        chat_id_serialzier = ChatIdResponseSerializer(self._ChatCreateDto(new_chat.id))
+        return chat_id_serialzier.data
+    
     def join_chat(self, user_data: Member, chat_id: str):
         chat = self._chat_repository.find_chat_by_id(chat_id)
         max_capacity = chat.max_capacity
@@ -81,3 +83,7 @@ class ChatService:
         def __init__(self, old_messages: list[dict], last_evaluated_key: dict):
             self.old_messages = old_messages
             self.last_evaluated_key = last_evaluated_key
+
+    class _ChatCreateDto:
+        def __init__(self, chat_id: int):
+            self.chat_id = chat_id
