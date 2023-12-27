@@ -5,4 +5,5 @@ from .chat_serializer import (
     ChatObjectResponseSerailzier,
     ChatJoinResponseSerializer,
     JoinedMembersResponseSerializer,
+    ChatIdResponseSerializer,
 )

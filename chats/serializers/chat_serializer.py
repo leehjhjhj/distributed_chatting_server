@@ -40,3 +40,6 @@ class ChatObjectResponseSerailzier(serializers.ModelSerializer):
 
 class JoinedMembersResponseSerializer(serializers.Serializer):
     joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
+
+class ChatIdResponseSerializer(serializers.Serializer):
+    chatId = serializers.IntegerField(source='chat_id')
