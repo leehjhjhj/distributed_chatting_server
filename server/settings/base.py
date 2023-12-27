@@ -87,8 +87,8 @@ ASGI_APPLICATION = "server.asgi.application"
 AUTH_USER_MODEL = 'members.Member'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'AUTH_HEADER_TYPES': ('Bearer',),
