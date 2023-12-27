@@ -1,2 +1,2 @@
-from .domains import Chat, Participant
+from .domains import Chat, Participant, Bookmark
 # Create your models here.
