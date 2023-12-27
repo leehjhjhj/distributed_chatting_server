@@ -14,5 +14,5 @@ class ChatView(APIView):
         self._chat_service = ChatsContainer.chat_service()
 
     def post(self, request):
-        self._chat_service.create_chat(request.data, request.user)
-        return Response(status=status.HTTP_201_CREATED)
+        response = self._chat_service.create_chat(request.data, request.user)
+        return Response(response, status=status.HTTP_201_CREATED)
