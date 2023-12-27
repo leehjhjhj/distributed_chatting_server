@@ -11,4 +11,4 @@ class RefreshAccessTokenView(APIView):
 
     def post(self, request, *args, **kwargs):
         response = self._token_service.refresh_access_token(request.data)
-        return Response(response, status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_201_CREATED)
