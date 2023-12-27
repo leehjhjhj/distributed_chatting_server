@@ -28,7 +28,7 @@ class ChatService:
         max_capacity = chat.max_capacity
         redis_conn = get_redis_connection(db_select=1)
         headcount = redis_conn.scard(chat_id)
-        if headcount + 1 >= max_capacity:
+        if headcount + 1 > max_capacity:
             raise OverMaxCountError
 
         table = get_dynamodb_table()
