@@ -33,7 +33,7 @@ class SigninResponseSerializer(serializers.Serializer):
     member = MemberResponseSerializer()
 
 class LogoutRequestSerializer(serializers.Serializer):
-    refreshToken = serializers.CharField(source='refresh_token')
+    userId = serializers.IntegerField(source='user_id')
 
 class RefreshAccessRequestSerialzier(serializers.Serializer):
     refreshToken = serializers.CharField(source='refresh_token')
