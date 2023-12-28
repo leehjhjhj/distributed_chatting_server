@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from members.domains import Member
 from django.contrib.auth.hashers import make_password
-from utils.validators import validate_password, validate_email, validate_nickname
+from utils.validators import validate_password, validate_email, validate_nickname, ERROR_MESSAGE
 
 class SignupRequestSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(validators=[validate_email])
-    password = serializers.CharField(validators=[validate_password])
-    nickname = serializers.CharField(validators=[validate_nickname])
+    email = serializers.EmailField(validators=[validate_email], error_messages=ERROR_MESSAGE)
+    password = serializers.CharField(validators=[validate_password], error_messages=ERROR_MESSAGE)
+    nickname = serializers.CharField(validators=[validate_nickname], error_messages=ERROR_MESSAGE)
+    
     class Meta:
         model = Member
         fields = ('email', 'password', 'nickname')
