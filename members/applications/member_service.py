@@ -48,8 +48,7 @@ class MemberService:
         logout_request_serialzier.is_valid(raise_exception=True)
         logout_data: dict = logout_request_serialzier.validated_data
         
-        refresh_token = logout_data.get('refresh_token')
-        user_id = TokenValidator.get_user_id_from_refresh_token(refresh_token)
+        user_id = logout_data.get('user_id')
         redis_conn: Redis = get_redis_connection(db_select=3)
         redis_conn.delete(user_id)
 
