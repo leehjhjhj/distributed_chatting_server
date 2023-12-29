@@ -3,11 +3,9 @@ from utils.redis_utils import get_redis_connection
 from rest_framework_simplejwt.exceptions import TokenError
 from utils.exceptions import (
                                 NotValidTokenError,
-                                NotMatchTokenUserError,
                                 AleadyLogoutUserError,
                                 RefreshTokenNotMatchError,
                             )
-from redis import Redis
 
 class TokenValidator:
     def __init__(self, token: str, user_id: int = None):
