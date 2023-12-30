@@ -7,3 +7,7 @@ from .chat_serializer import (
     JoinedMembersResponseSerializer,
     ChatIdResponseSerializer,
 )
+
+from .bookmark_serializer import(
+    BookmarkCreateRequestSerializer,
+)
