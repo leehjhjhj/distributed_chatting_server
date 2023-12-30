@@ -33,10 +33,14 @@ class ChatMessageResponseSerializer(serializers.Serializer):
 class ChatObjectResponseSerailzier(serializers.ModelSerializer):
     madeBy = serializers.CharField(source='made_by.nickname')
     maxCapacity = serializers.IntegerField(source='max_capacity')
+    userId = serializers.IntegerField(source='made_by.id')
 
     class Meta:
         model = Chat
-        fields = ('id', 'name', 'description', 'madeBy', 'maxCapacity',)
+        fields = ('id', 'name', 'description', 'madeBy', 'userId', 'maxCapacity',)
 
 class JoinedMembersResponseSerializer(serializers.Serializer):
     joinedMembers = serializers.ListField(child=serializers.CharField(), source='joined_members')
+
+class ChatIdResponseSerializer(serializers.Serializer):
+    chatId = serializers.IntegerField(source='chat_id')

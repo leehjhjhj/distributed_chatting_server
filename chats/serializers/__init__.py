@@ -5,6 +5,7 @@ from .chat_serializer import (
     ChatObjectResponseSerailzier,
     ChatJoinResponseSerializer,
     JoinedMembersResponseSerializer,
+    ChatIdResponseSerializer,
 )
 
 from .bookmark_serializer import(
