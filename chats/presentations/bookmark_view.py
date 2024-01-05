@@ -5,7 +5,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from chats.containers import ChatsContainer
 from rest_framework.permissions import IsAuthenticated
 
-class BookmarkCreateView(APIView):
+class BookmarkView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -14,5 +14,5 @@ class BookmarkCreateView(APIView):
         self._bookmark_service = ChatsContainer.bookmark_service()
 
     def post(self, request):
-        self._bookmark_service.create_bookmark(request.data, request.user)
-        return Response(status=status.HTTP_201_CREATED)
+        self._bookmark_service.create_delete_bookmark(request.data, request.user)
+        return Response(status=status.HTTP_200_OK)

@@ -5,4 +5,4 @@ from .chat_room_get_view import ChatRoomGetView
 from .chat_detail_view import ChatDetailView
 from .chat_joined_members_view import ChatJoinedMembersView
 from .chat_delete_view import ChatDeleteView
-from .bookmark_create_view import BookmarkCreateView
+from .bookmark_view import BookmarkView
